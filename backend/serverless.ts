@@ -96,11 +96,19 @@ const serverlessConfiguration: Serverless = {
               AttributeName: "ID",
               AttributeType: "S",
             },
+            {
+              AttributeName: "description",
+              AttributeType: "S",
+            },
           ],
           KeySchema: [
             {
               AttributeName: "ID",
               KeyType: "HASH",
+            },
+            {
+              AttributeName: "description",
+              KeyType: "RANGE",
             },
           ],
           BillingMode: "PAY_PER_REQUEST",

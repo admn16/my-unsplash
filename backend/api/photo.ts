@@ -51,7 +51,9 @@ export const upload: APIGatewayProxyHandler = async (event, _context) => {
 
     return {
       statusCode: STATUS_CODES.SUCCESS,
-      body: data.Location,
+      body: JSON.stringify({
+        url: data.Location,
+      }),
     };
   } catch (ex) {
     return {
