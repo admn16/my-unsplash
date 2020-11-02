@@ -1,10 +1,14 @@
-import { APIGatewayProxyHandlerV2 } from "aws-lambda";
+import { APIGatewayProxyHandler } from "aws-lambda";
 import { S3 } from "aws-sdk";
 import { v1 as uuidv1 } from "uuid";
-import { STATUS_CODES } from "./types";
 import "source-map-support/register";
 
 const s3 = new S3();
+
+export enum STATUS_CODES {
+  SUCCESS = 200,
+  ERROR = 400,
+}
 
 export interface BodyModel {
   image?: string; // base64 image
@@ -12,10 +16,7 @@ export interface BodyModel {
   extension?: string; // .jpg
 }
 
-export const uploadPhoto: APIGatewayProxyHandlerV2 = async (
-  event,
-  _context
-) => {
+export const upload: APIGatewayProxyHandler = async (event, _context) => {
   try {
     const parsedBody: BodyModel =
       typeof event.body !== "object" ? JSON.parse(event.body) : event.body;
@@ -29,9 +30,10 @@ export const uploadPhoto: APIGatewayProxyHandlerV2 = async (
       .join("")
       .replace("image/", "");
 
+    const photoId = uuidv1();
     const filePath = `${
       process.env.PHOTO_BUCKET_FOLDER || ""
-    }/${uuidv1()}.${extension}`;
+    }/${photoId}.${extension}`;
 
     const s3Params: S3.PutObjectRequest = {
       Body: decodedImage,
@@ -40,7 +42,8 @@ export const uploadPhoto: APIGatewayProxyHandlerV2 = async (
       ContentType: `image/${extension}`,
       ACL: "public-read",
       Metadata: {
-        "label": parsedBody.label,
+        label: parsedBody.label,
+        id: photoId,
       },
     };
 
@@ -48,13 +51,12 @@ export const uploadPhoto: APIGatewayProxyHandlerV2 = async (
 
     return {
       statusCode: STATUS_CODES.SUCCESS,
-      body: JSON.stringify(data),
+      body: data.Location,
     };
-  } catch (error) {
-    console.error(error);
+  } catch (ex) {
     return {
-      statusCode: STATUS_CODES.ERROR,
-      body: JSON.stringify(event),
+      statusCode: 200,
+      body: JSON.stringify(ex),
     };
   }
 };
