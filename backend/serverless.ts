@@ -31,7 +31,6 @@ const serverlessConfiguration: Serverless = {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
       PHOTO_BUCKET_NAME: "${self:custom.photoBucketName}",
       PHOTO_BUCKET_FOLDER: "${self:custom.photoBucketFolder}",
-      PHOTO_DB_TABLE: "${self:custom.photoDbTable}",
     },
     memorySize: 128,
     timeout: 15,
@@ -77,6 +76,9 @@ const serverlessConfiguration: Serverless = {
           },
         },
       ],
+      environment: {
+        PHOTO_DB_TABLE: "${self:custom.photoDbTable}",
+      }
     },
   },
   resources: {
