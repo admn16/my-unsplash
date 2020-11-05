@@ -49,7 +49,7 @@ const serverlessConfiguration: Serverless = {
   },
   functions: {
     uploadPhoto: {
-      handler: "./api/photo.upload",
+      handler: "./api/admin/photo.upload",
       events: [
         {
           http: {
@@ -58,6 +58,20 @@ const serverlessConfiguration: Serverless = {
           },
         },
       ],
+    },
+    getPhotos: {
+      handler: "./api/client/photo.list",
+      events: [
+        {
+          http: {
+            method: "get",
+            path: "client/photos",
+          },
+        },
+      ],
+      environment: {
+        PHOTO_DB_TABLE: "${self:custom.photoDbTable}",
+      },
     },
     photoToDb: {
       handler: "./triggers/photo.photoToDb",
@@ -78,7 +92,7 @@ const serverlessConfiguration: Serverless = {
       ],
       environment: {
         PHOTO_DB_TABLE: "${self:custom.photoDbTable}",
-      }
+      },
     },
   },
   resources: {

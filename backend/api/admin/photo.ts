@@ -1,14 +1,10 @@
-import { APIGatewayProxyHandler } from "aws-lambda";
+import { APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { S3 } from "aws-sdk";
 import { v1 as uuidv1 } from "uuid";
+import { STATUS_CODES } from "../../types";
 import "source-map-support/register";
 
 const s3 = new S3();
-
-export enum STATUS_CODES {
-  SUCCESS = 200,
-  ERROR = 400,
-}
 
 export interface BodyModel {
   image?: string; // base64 image
@@ -16,7 +12,7 @@ export interface BodyModel {
   extension?: string; // .jpg
 }
 
-export const upload: APIGatewayProxyHandler = async (event, _context) => {
+export const upload: APIGatewayProxyHandlerV2 = async (event, _context) => {
   try {
     const parsedBody: BodyModel =
       typeof event.body !== "object" ? JSON.parse(event.body) : event.body;

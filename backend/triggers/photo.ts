@@ -16,6 +16,7 @@ async function getFileInfo(s3Record: S3EventRecord) {
   const origimage = await s3.getObject(getObjParams).promise();
   const fileName = origimage.Metadata["label"];
   const photoId = origimage.Metadata["id"];
+  const url = `https://${file.bucket.name}.s3.amazonaws.com/${file.object.key}`;
 
   return {
     fileName,
@@ -25,6 +26,7 @@ async function getFileInfo(s3Record: S3EventRecord) {
     s3File: file,
     srcBucket,
     srcKey,
+    url,
   };
 }
 
